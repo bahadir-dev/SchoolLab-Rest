@@ -12,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -70,8 +71,8 @@ public class SchoolController {
 
     /*
     create an ednpoint for individual address information
-    /adress/1 2 3
-    return ststaus code 200
+    /adresss/1 2 3
+    return status code 200
     "address is successfully retrieved"
     success true
     and adress infor
@@ -87,6 +88,33 @@ public class SchoolController {
     create an endpoint to update individual address information
     return updated address directly.
      */
+    @PutMapping("/address/{id}")
+    public AddressDTO updateAddress(@PathVariable("id") Long id, @RequestBody AddressDTO addressDTO) throws Exception {
+        addressDTO.setId(id);
 
+        AddressDTO updateAddress = addressService.update(addressDTO);
+
+        return updateAddress;
+    }
+
+     /*
+        create an endpoint for creating teacher
+        return Http status 201
+        custom header "teacherId","idCreated"
+        responseWrapper("Teacher is created",teacherInfo)
+     */
+
+    @PostMapping("/teachers")
+    public ResponseEntity<ResponseWrapper> createTeacher(@Valid @RequestBody TeacherDTO teacherDTO){
+        TeacherDTO teacher = teacherService.createTeacher(teacherDTO);
+
+        ResponseWrapper responseWrapper = new ResponseWrapper(true,"Teacher is created."
+                ,HttpStatus.CREATED.value(),teacher);
+
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .header("teacherId",String.valueOf(teacher.getId()))
+                .body(responseWrapper);
+
+    }
 
 }
